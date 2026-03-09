@@ -269,5 +269,5 @@ if (typeof JSON.stringify !== "function") {
 
 // ts/hostscript.ts
 var sayHello = function() {
-  return alert("Hello from ExtendScript");
+  return alert("Hello from ExtendScript!");
 };
