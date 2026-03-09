@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node build.js"
+    "build": "node build_hostscript.js && node build_main.js",
+    "build_host": "node build_hostscript.js",
+    "build_main": "node build_main.js"
   },
   "keywords": [],
   "author": "",

@@ -1,23 +1,13 @@
-const esbuild = require("esbuild");
+const buildHostscript = require("./build_hostscript");
+const buildMain = require("./build_main");
 
-esbuild.build({
-  entryPoints: ["./ts/hostscript.ts"],
-  bundle: true,
-  outfile: "jsx/hostscript.jsx",
-  platform: "neutral",
-  target: ["es5"],
-  format: "cjs",
-  treeShaking: false,
-  minify: false,
-}).catch(() => process.exit(1));
+async function buildAll() {
+  await buildHostscript();
+  await buildMain();
+}
 
-esbuild.build({
-  entryPoints: ["tsx/app.tsx"],
-  bundle: true,
-  outfile: "js/main.js",
-  format: "iife",
-  platform: "browser",
-  target: ["chrome91"],
-  jsx: "automatic",
-  sourcemap: true,
-}).catch(() => process.exit(1));
+module.exports = buildAll;
+
+if (require.main === module) {
+  buildAll().catch(() => process.exit(1));
+}

@@ -21727,7 +21727,7 @@
   function Main({ cs: cs2 }) {
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { children: "Hello React in CEP" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => cs2.evalScript("sayHello()"), children: "Test" })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => cs2.evalScript("sayHello()"), children: "Click Me" })
     ] });
   }
 

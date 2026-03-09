@@ -4,4 +4,4 @@ import "./library/extendscript/array";
 import "./library/extendscript/json";
 import * as lib from "./library/extendscript/library";
 
-var sayHello = () => alert("Hello from ExtendScript");
+var sayHello = () => alert("Hello from ExtendScript!");
