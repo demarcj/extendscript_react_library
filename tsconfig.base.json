@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "downlevelIteration": false,
+    "noEmitHelpers": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
+}

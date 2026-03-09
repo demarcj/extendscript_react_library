@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "ESNext",
+    "noEmit": true,           
+    "lib": ["ES5"],
+  },
+  "include": [
+    "ts/hostscript.ts",
+    "ts/library/extendscript/**/*.d.ts"
+  ]
+}
