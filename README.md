@@ -1,171 +1,183 @@
-# Adobe CEP Panel Extension Framework
+# Adobe CEP React Panel Framework
 
-A TypeScript-based Adobe Common Extensibility Platform (CEP) panel extension that provides a reusable framework for building extensions for Adobe Creative Cloud applications. This project includes utility libraries for common ExtendScript operations and a modular structure for easy extension development.
+This project is a React-based Adobe CEP panel extension framework for building panels that talk to ExtendScript host code. It is based on my ExtendScript library, but this version uses React.js for the panel UI and Node-based tooling for the build process.
+
+If you want the non-React version, or prefer a simpler ExtendScript-focused setup, see the original library:
+
+<https://github.com/demarcj/extendscript_library>
 
 ## Overview
 
-This is a CEP 9.0 panel extension that allows you to build custom panels for Adobe applications with a modern TypeScript/JavaScript frontend and ExtendScript backend. The extension currently targets **Adobe After Effects** (v13.0 and above) but can be easily configured to support other Adobe apps like Photoshop, Illustrator, InDesign, Premiere Pro, and more.
+This framework targets Adobe CEP panel development with:
+
+- A React frontend rendered into the CEP panel
+- TypeScript source for both the panel and host script
+- ExtendScript output for Adobe host applications
+- A small utility library under `ts/library/extendscript`
+- esbuild-based bundling for the panel and host script
+
+The current manifest is configured for Adobe After Effects by default, but the extension can be adapted to other CEP-compatible Adobe applications by editing `CSXS/manifest.xml`.
 
 ## Features
 
-- **Modern Frontend**: Built with HTML/CSS/JavaScript with Topcoat styling for native Adobe look
-- **TypeScript Support**: Full TypeScript support for type-safe development
-- **ExtendScript Integration**: Seamless communication between the panel UI and Adobe applications via ExtendScript
-- **Utility Libraries**: Pre-built utility functions for:
-  - Object manipulation
-  - String operations
-  - Array operations
-  - JSON handling
-- **Build Pipeline**: Automated build process using esbuild and Babel
-- **Theme Support**: Built-in dark theme support for Adobe applications
+- React.js panel UI
+- TypeScript for panel and host-side source files
+- ExtendScript host script output in `jsx/hostscript.jsx`
+- Adobe `CSInterface` integration for panel-to-host communication
+- Theme support through `js/themeManager.js`
+- Separate build steps for the panel bundle and host script bundle
 
 ## Installation
 
-1. **Clone or download** this extension to your Adobe CEP extensions folder:
-   - **Windows**: `C:\Users\[YourUsername]\AppData\Roaming\Adobe\CEP\extensions\`
-   - **Mac**: `~/Library/Application Support/Adobe/CEP/extensions/`
+1. Clone or copy this folder into your CEP extensions directory.
 
-2. **Enable Debug Mode** (required for loading unsigned extensions):
-   - Create or edit `PlayerDebugMode` file in the CEP configuration folder:
-     - **Windows**: `C:\Users\[YourUsername]\AppData\Roaming\Adobe\CEP\`
-     - **Mac**: `~/Library/Application Support/Adobe/CEP/`
-   - Add this line: `PlayerDebugMode=1`
+   Windows:
+   `C:\Users\[YourUsername]\AppData\Roaming\Adobe\CEP\extensions\`
 
-3. **Place extension folder** in your CEP extensions directory with the bundle ID `com.framework.panel`
+   macOS:
+   `~/Library/Application Support/Adobe/CEP/extensions/`
 
-4. **Restart the Adobe application** to load the extension
+2. Enable CEP debug mode so unsigned extensions can load.
+
+   Windows:
+   `C:\Users\[YourUsername]\AppData\Roaming\Adobe\CEP\`
+
+   macOS:
+   `~/Library/Application Support/Adobe/CEP/`
+
+   Add or edit a file so it contains:
+
+   ```text
+   PlayerDebugMode=1
+   ```
+
+3. Make sure the extension folder name matches the bundle ID used by the manifest.
+
+4. Restart the Adobe host application.
 
 ## Development
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm or yarn
-- Adobe application (After Effects v13.0+, or other supported Adobe apps)
+- Node.js
+- npm
+- A CEP-compatible Adobe application
 
 ### Setup
 
 ```bash
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
 ```
 
-### Build Process
+### Build Scripts
 
-The build script (`build.js`) handles:
-- TypeScript compilation
-- Bundling with esbuild
-- Asset processing
+The project currently exposes these scripts:
 
-Run the build command to generate optimized JavaScript files in the `js/` directory.
+- `npm run build` builds both the ExtendScript host file and the React panel bundle
+- `npm run build_host` builds only `jsx/hostscript.jsx`
+- `npm run build_main` builds only `js/main.js`
+
+`build_hostscript.js` bundles `ts/hostscript.ts` to `jsx/hostscript.jsx`.
+
+`build_main.js` bundles `tsx/app.tsx` to `js/main.js`.
 
 ## Project Structure
 
-```
-com.framework.panel/
-├── index.html              # Main panel UI
-├── index.ts                # Entry point (TypeScript)
-├── package.json            # Dependencies and scripts
-├── tsconfig.json           # TypeScript configuration
-├── build.js                # Build configuration
-│
-├── css/                    # Stylesheets
-│   ├── styles.css         # Custom styles
-│   ├── boilerplate.css    # Base styles
-│   └── topcoat-desktop-dark.min.css  # Adobe Topcoat theme
-│
-├── js/                     # Compiled JavaScript
-│   ├── main.js            # UI interaction logic
-│   ├── themeManager.js    # Handle Adobe theme changes
-│   └── libs/
-│       ├── CSInterface.js # Adobe CEP API (do not modify)
-│       └── jquery-2.0.2.min.js  # jQuery library
-│
-├── jsx/                    # ExtendScript files
-│   └── hostscript.jsx     # ExtendScript host code
-│
-├── library/                # Utility TypeScript libraries
-│   ├── library.ts         # Main export
-│   ├── object.ts          # Object utilities
-│   ├── string.ts          # String utilities
-│   ├── array.ts           # Array utilities
-│   ├── json.ts            # JSON utilities
-│   └── *.d.ts             # Type definitions
-│
-├── CSXS/                   # Extension configuration
-│   └── manifest.xml       # CEP manifest with app support
-│
-└── icons/                  # Panel icons
+```text
+com.react.framework.panel/
+|-- CSXS/
+|   `-- manifest.xml
+|-- css/
+|   |-- boilerplate.css
+|   |-- styles.css
+|   `-- topcoat-desktop-dark.min.css
+|-- icons/
+|-- js/
+|   |-- libs/
+|   |   `-- CSInterface.js
+|   |-- main.js
+|   |-- main.js.map
+|   `-- themeManager.js
+|-- jsx/
+|   `-- hostscript.jsx
+|-- ts/
+|   |-- hostscript.ts
+|   `-- library/
+|       |-- cep_panel/
+|       `-- extendscript/
+|-- tsx/
+|   |-- app.tsx
+|   `-- main.tsx
+|-- build.js
+|-- build_hostscript.js
+|-- build_main.js
+|-- index.html
+|-- package.json
+`-- README.md
 ```
 
-## Configuration
+## Frontend
 
-### Supported Adobe Applications
+The panel UI is built with React, not jQuery.
 
-Edit `CSXS/manifest.xml` to enable/disable support for different Adobe applications. Uncomment the desired `<Host>` tags:
+- `index.html` provides the CEP panel shell and the `#root` mount node
+- `tsx/app.tsx` creates the React root and initializes the panel
+- `tsx/main.tsx` contains the main React component
+- `js/libs/CSInterface.js` provides the Adobe CEP API bridge
 
-```xml
-<!-- Photoshop -->
-<Host Name="PHXS" Version="[16.0,99.9]" />
-<Host Name="PHSP" Version="[16.0,99.9]" />
+The current panel uses `CSInterface` directly from React code:
 
-<!-- Illustrator -->
-<Host Name="ILST" Version="[18.0,99.9]" />
-
-<!-- InDesign -->
-<Host Name="IDSN" Version="[10.0,99.9]" />
-
-<!-- Premiere Pro -->
-<Host Name="PPRO" Version="[8.0,99.9]" />
-
-<!-- After Effects (enabled by default) -->
-<Host Name="AEFT" Version="[13.0,99.9]" />
+```ts
+const cs = new CSInterface();
+cs.evalScript("sayHello()");
 ```
 
-## Usage
+## Host Script
 
-### From the Panel
+`ts/hostscript.ts` contains the host-side ExtendScript source. It is bundled into:
 
-1. Open the Adobe application (After Effects by default)
-2. Go to **Windows → Framework** to open the panel
-3. Click **"Call ExtendScript"** to execute ExtendScript code
+```text
+jsx/hostscript.jsx
+```
 
-### Extending the Panel
+That file is what the Adobe host application executes through CEP.
 
-1. **Modify the UI**: Edit `index.html` to add new buttons, inputs, etc.
-2. **Add Logic**: Update `js/main.js` to handle UI events
-3. **Call ExtendScript**: Use the CSInterface API to execute code in After Effects:
-   ```javascript
-   const csInterface = new CSInterface();
-   csInterface.evalScript('alert("Hello from After Effects!");');
-   ```
+## Extending the Panel
 
-4. **Build**: Run `npm run build` to compile TypeScript changes
+1. Update the React UI in `tsx/main.tsx`.
+2. Initialize app-level behavior in `tsx/app.tsx`.
+3. Add or change ExtendScript functions in `ts/hostscript.ts`.
+4. Call those functions from the panel with `cs.evalScript(...)`.
+5. Run `npm run build`.
+
+## Supported Adobe Applications
+
+Edit `CSXS/manifest.xml` to change the host applications supported by the extension. The current setup is aimed at After Effects, but CEP hosts like Photoshop, Illustrator, InDesign, and Premiere Pro can be enabled by adjusting the manifest entries.
 
 ## Dependencies
 
-- **TypeScript**: For type-safe development
-- **esbuild**: Fast JavaScript bundler
-- **Babel**: JavaScript transpiler
-- **Topcoat CSS**: Adobe's CSS framework for native styling
-- **jQuery**: DOM manipulation library
+- React
+- React DOM
+- TypeScript
+- esbuild
+- Babel
+- Adobe CSInterface
+- Topcoat CSS
+
+## Notes
+
+- This repository is the React-based companion to the original ExtendScript library
+- The original non-React library is here: <https://github.com/demarcj/extendscript_library>
+- `js/libs/jquery-2.0.2.min.js` may still exist in older builds or legacy files, but the current panel architecture does not use jQuery
+- Panel size, icons, and host targeting are configured in `CSXS/manifest.xml`
+
+## Troubleshooting
+
+- If the extension does not appear, confirm debug mode is enabled and the folder is in the CEP extensions directory
+- If the panel loads but React does not render, check the CEP dev tools console for script errors
+- If `evalScript` calls fail, verify the host app target in `CSXS/manifest.xml` and confirm `jsx/hostscript.jsx` was rebuilt
 
 ## License
 
 ISC
-
-## Notes
-
-- This extension requires debug mode to be enabled for loading unsigned extensions
-- Panel size can be configured in `CSXS/manifest.xml` under the `<Geometry>` section
-- The CEP version is set to 9.0; adjust if targeting specific Adobe versions
-- Icon files should be placed in the `icons/` directory and referenced in `manifest.xml`
-
-## Troubleshooting
-
-- **Extension not appearing**: Ensure debug mode is enabled and the folder is in the correct CEP extensions location
-- **Script errors**: Check the browser console (F12) in the extension panel for JavaScript errors
-- **ExtendScript not working**: Verify the host application is properly targeted in `manifest.xml`
