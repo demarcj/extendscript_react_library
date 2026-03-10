@@ -11,12 +11,10 @@ const build_map = {
   sourcemap: true,
 };
 
-function buildMain() {
-  return esbuild.build(build_map);
-}
+const build_main = () => esbuild.build(build_map);
 
-module.exports = buildMain;
+module.exports = build_main;
 
 if (require.main === module) {
-  buildMain().catch(() => process.exit(1));
+  build_main().catch(() => process.exit(1));
 }
