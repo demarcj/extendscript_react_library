@@ -21725,9 +21725,9 @@
   // tsx/main.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime());
   function Main({ cs: cs2 }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { children: "Hello React in CEP" }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => cs2.evalScript("sayHello()"), children: "Click Me Button" })
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { onClick: () => cs2.evalScript("sayHello()"), children: "Click Me" })
     ] });
   }
 
