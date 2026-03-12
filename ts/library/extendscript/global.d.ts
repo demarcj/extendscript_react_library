@@ -2,7 +2,6 @@
 type AllLayerType = Layer & AVLayer & TextLayer & ShapeLayer;
 
 interface App {
-  // --- Core ---
   version: string;
   buildName: string;
   project: Project | null;
@@ -18,50 +17,51 @@ interface App {
   alert(message: string): void;
   beep(): void;
 
-  // --- Preferences ---
   preferences: Preferences;
-
-  // --- Scheduling ---
   scheduleTask(
     script: string,
     delay: number,
     repeat?: boolean
   ): number;
-
   cancelTask(taskID: number): void;
-
-  // --- Memory / GC ---
   purge(target: PurgeTarget): void;
+}
+
+interface Preferences {
+  getPrefAsString(section: string, key: string): string;
+  getPrefAsLong(section: string, key: string): number;
+  getPrefAsBool(section: string, key: string): boolean;
+  savePrefAsString(section: string, key: string, value: string): void;
+  savePrefAsLong(section: string, key: string, value: number): void;
+  savePrefAsBool(section: string, key: string, value: boolean): void;
 }
 
 interface Project {
   activeItem: CompItem | null;
   items: ItemCollection;
   file: File | null;
-
+  item(index: number): CompItem;
   save(file?: File): void;
   close(saveChanges?: boolean): void;
 }
 
-interface CompItem {
-  name: string;
+interface CompItem extends AVItem {
   width: number;
   height: number;
   pixelAspect: number;
   frameRate: number;
   duration: number;
+  frameDuration: number;
+  displayStartTime: number;
   workAreaDuration: number;
   workAreaStart: number;
 
   selectedLayers: AllLayerType[];
   layers: LayerCollection;
-
   time: number;
 
-  /** 1-based index */
   layer(index: number): AllLayerType;
-  /** Finds the first layer with this name (topmost match). Returns null if not found. */
-  layer(name: string): Layer | null;
+  layer(name: string): AllLayerType | null;
 
   markerProperty: MarkerProperty;
 }
@@ -71,20 +71,8 @@ declare var CompItem: {
   new (...args: any[]): CompItem;
 };
 
-interface Preferences {
-  getPrefAsString(section: string, key: string): string;
-  getPrefAsLong(section: string, key: string): number;
-  getPrefAsBool(section: string, key: string): boolean;
-
-  savePrefAsString(section: string, key: string, value: string): void;
-  savePrefAsLong(section: string, key: string, value: number): void;
-  savePrefAsBool(section: string, key: string, value: boolean): void;
-}
-
 interface ItemCollection {
   length: number;
-
-  // 1-based index access
   [index: number]: Item;
 
   addComp(
@@ -97,7 +85,6 @@ interface ItemCollection {
   ): CompItem;
 
   addFolder(name: string): FolderItem;
-
   remove(): void;
 }
 
@@ -105,14 +92,11 @@ interface Item {
   name: string;
   id: number;
   parentFolder: FolderItem | null;
-
   remove(): void;
 }
 
 interface LayerCollection {
   length: number;
-
-  // 1-based indexing
   [index: number]: AllLayerType;
 
   add(
@@ -134,11 +118,17 @@ interface LayerCollection {
   removeAll(): void;
 }
 
+interface SourceRect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 interface Layer {
   index: number;
   name: string;
   matchName: string;
-
   enabled: boolean;
   shy: boolean;
   locked: boolean;
@@ -146,33 +136,25 @@ interface Layer {
   solo: boolean;
   hasVideo: boolean;
   hasAudio: boolean;
-
   parent: AllLayerType | null;
   hasParent: boolean;
-
   inPoint: number;
   outPoint: number;
   startTime: number;
   stretch: number;
-
   label: number;
   comment: string;
-
   containingComp: CompItem;
-
-  // 2D / 3D
   threeDLayer: boolean;
-
-  // Core methods
   duplicate(): AllLayerType;
   remove(): void;
   moveBefore(layer: AllLayerType): void;
   moveAfter(layer: AllLayerType): void;
   moveToBeginning(): void;
   moveToEnd(): void;
-
-  // Properties
-  property(nameOrIndex: string | number): Property & PropertyGroup;
+  copyToComp(comp: CompItem): void;
+  sourceRectAtTime(time: number, extents: boolean): SourceRect;
+  property(nameOrIndex: string | number): PropertyGroup;
 }
 
 interface AVLayer extends Layer {
@@ -181,32 +163,102 @@ interface AVLayer extends Layer {
   motionBlur: boolean;
   opacity: Property;
   collapseTransformation: boolean;
-  property(name: "ADBE Time Remapping"): TimeRemapProperty;
   timeRemapEnabled: boolean;
   marker: MarkerProperty;
+  property(name: "ADBE Time Remapping"): TimeRemapProperty;
 }
 
 interface TextLayer extends AVLayer {
-  property(name: `Source Text` | `ADBE Text Properties`): Property;
+  property(name: `Source Text`): TextProperty;
+  property(name: "ADBE Text Properties"): PropertyGroup;
 }
 
 interface ShapeLayer extends AVLayer {}
 
-interface Property {
-  value: any;
-  numKeys: number;
-
-  setValue(value: any): void;
-  setValueAtTime(time: number, value: any): void;
-
-  keyTime(index: number): number;
-  keyValue(index: number): any;
-  removeKey(index: number): void;
-  property(name: string): Property;
-  expression?: string;
-  isTimeVarying: boolean;
+interface PropertyBase {
+  name: string;
+  matchName: string;
+  propertyIndex: number;
+  propertyDepth: number;
+  parentProperty: PropertyGroup | null;
 }
 
+interface PropertyGroup extends PropertyBase {
+  name: string;
+  matchName: string;
+  parentProperty: PropertyGroup | null;
+  numProperties: number;
+  canAddProperty?: boolean;
+  property(indexOrName: number | string): Property & PropertyGroup;
+}
+
+interface Property extends PropertyBase {
+  value: any;
+  numKeys: number;
+  isTimeVarying: boolean;
+  expression: string;
+  dimensionsSeparated: boolean;
+  setValue(value: any): void;
+  setValueAtTime(time: number, value: any): void;
+  setValueAtKey(keyIndex: number, value: any): void;
+  keyTime(keyIndex: number): number;
+  keyValue(keyIndex: number): any;
+  removeKey(keyIndex: number): void;
+}
+
+interface TextProperty extends Property {
+  value: TextDocument;
+  setValue(value: TextDocument): void;
+}
+
+interface TextDocument {
+  text: string;
+
+  // Font
+  font: string;
+  fontSize: number;
+  underline: boolean
+
+  // Paragraph
+  justification: ParagraphJustification;
+  autoLeading: boolean;
+  leading: number;
+
+  // Character spacing
+  tracking: number;
+  baselineShift: number;
+  horizontalScale: number;
+  verticalScale: number;
+
+  // Fill
+  applyFill: boolean;
+  fillColor: [number, number, number];
+
+  // Stroke
+  applyStroke: boolean;
+  strokeColor: [number, number, number];
+  strokeWidth: number;
+  strokeOverFill: boolean;
+
+  // Faux styles
+  fauxBold: boolean;
+  fauxItalic: boolean;
+
+  // All caps / small caps
+  allCaps: boolean;
+  smallCaps: boolean;
+
+  // Baseline
+  baselineDirection: number;
+
+  // Misc
+  lineJoin: number;
+  direction: number;
+
+  resetCharStyle(): void;
+  resetParagraphStyle(): void;
+  characterRange(start: number, end: number): TextDocument;
+}
 
 declare var PurgeTarget: {
   ALL_CACHES: number;
@@ -223,32 +275,14 @@ interface AVItem extends Item {
   pixelAspect: number;
   duration: number;
   frameRate: number;
-
   hasVideo: boolean;
   hasAudio: boolean;
-
   label: number;
-
-  // Proxy / time
   time: number;
 }
 
 interface FolderItem extends Item {
   items: ItemCollection;
-}
-
-interface PropertyGroup {
-  name: string;
-  matchName: string;
-
-  parentProperty: PropertyGroup | null;
-
-  numProperties: number;
-
-  property(indexOrName: number | string): Property & PropertyGroup;
-
-  // Common AE checks
-  canAddProperty?: boolean;
 }
 
 interface TimeRemapProperty extends Property {
@@ -293,9 +327,13 @@ declare var KeyframeInterpolationType: {
 }
 
 declare var ParagraphJustification: {
-  LEFT_JUSTIFY: number;
-  CENTER_JUSTIFY: number;
-  RIGHT_JUSTIFY: number;
+  LEFT_JUSTIFY: 7413;
+  RIGHT_JUSTIFY: 7414;
+  CENTER_JUSTIFY: 7415;
+  FULL_JUSTIFY_LASTLINE_LEFT: 7416;
+  FULL_JUSTIFY_LASTLINE_RIGHT: 7417;
+  FULL_JUSTIFY_LASTLINE_CENTER: 7418;
+  FULL_JUSTIFY_LASTLINE_FULL: 7419;
 }
 
 interface File {
@@ -304,7 +342,6 @@ interface File {
   encoding: string;
   eof: boolean;
   error: string;
-
   open(mode: "r" | "w" | "e"): boolean;
   close(): boolean;
   read(): string;
