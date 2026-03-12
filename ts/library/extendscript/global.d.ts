@@ -5,15 +5,9 @@ interface App {
   version: string;
   buildName: string;
   project: Project | null;
-
-  // --- Undo ---
   beginUndoGroup(name: string): void;
   endUndoGroup(): void;
-
-  // --- Execution ---
   executeCommand(id: number): void;
-
-  // --- UI / Alerts ---
   alert(message: string): void;
   beep(): void;
 
@@ -55,15 +49,12 @@ interface CompItem extends AVItem {
   displayStartTime: number;
   workAreaDuration: number;
   workAreaStart: number;
-
   selectedLayers: AllLayerType[];
   layers: LayerCollection;
   time: number;
-
+  markerProperty: MarkerProperty;
   layer(index: number): AllLayerType;
   layer(name: string): AllLayerType | null;
-
-  markerProperty: MarkerProperty;
 }
 
 declare var CompItem: {
@@ -74,7 +65,6 @@ declare var CompItem: {
 interface ItemCollection {
   length: number;
   [index: number]: Item;
-
   addComp(
     name: string,
     width: number,
@@ -83,7 +73,6 @@ interface ItemCollection {
     duration: number,
     frameRate: number
   ): CompItem;
-
   addFolder(name: string): FolderItem;
   remove(): void;
 }
@@ -286,38 +275,25 @@ interface FolderItem extends Item {
 }
 
 interface TimeRemapProperty extends Property {
-  // Base Property info
   name: string;
   matchName: "ADBE Time Remapping";
   parentProperty: PropertyGroup | null;
-
-  // Value
   value: number;
-
-  // Keyframe data
   numKeys: number;
   isTimeVarying: boolean;
-
-  // Value access
+  expression?: string;
+  canSetExpression?: boolean;
   setValue(value: number): void;
   setValueAtTime(time: number, value: number): void;
   valueAtTime(time: number, preExpression?: boolean): number;
-
-  // Keyframe inspection
   keyTime(index: number): number;
   keyValue(index: number): number;
   nearestKeyIndex(time: number): number;
-
-  // Interpolation
   setInterpolationTypeAtKey(
     index: number,
     inType: KeyframeInterpolationType,
     outType: KeyframeInterpolationType
   ): void;
-
-  // Optional (exists but rarely needed)
-  expression?: string;
-  canSetExpression?: boolean;
 }
 
 declare var KeyframeInterpolationType: {
