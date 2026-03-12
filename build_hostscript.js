@@ -11,9 +11,7 @@ const build_map = {
   minify: false,
 };
 
-function build_hostscript() {
-  return esbuild.build(build_map);
-}
+const build_hostscript = () => esbuild.build(build_map);
 
 module.exports = build_hostscript;
 

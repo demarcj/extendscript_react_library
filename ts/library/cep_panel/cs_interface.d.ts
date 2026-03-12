@@ -5,3 +5,7 @@ declare class CSInterface {
 declare var themeManager: {
   init(): void;
 }
+
+type MainProps = {
+  cs: CSInterface;
+};

@@ -5,10 +5,11 @@ html{
 }
 
 body{
-  margin: 10px;
+  display: grid;
+  padding: 15px;
 }
 
-#content {
+#root {
   margin-right: auto;
   margin-left: auto;
   vertical-align: middle;
