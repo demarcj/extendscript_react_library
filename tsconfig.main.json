@@ -7,10 +7,14 @@
     "jsx": "react-jsx",
     "strict": true,
     "moduleResolution": "Node",
+    "allowArbitraryExtensions": true,
     "skipLibCheck": true
   },
   "include": [
     "ts/library/cep_panel/**/*.d.ts",
-    "tsx/**/*.tsx"
+    "tsx/**/*.ts",
+    "tsx/**/*.tsx",
+    "tsx/**/*.d.ts",
+    "tsx/**/*.css"
   ]
 }
