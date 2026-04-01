@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../styles/main.module.css"],
+  "sourcesContent": [".main{\r\n  color: skyblue;\r\n}"],
+  "mappings": ";AAAA,CAACA;AACC,SAAO;AACT;",
+  "names": ["main"]
+}

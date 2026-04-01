@@ -21,8 +21,14 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/material": "^7.3.9",
+    "@preact/signals-react": "^3.9.1",
     "@types/es6-promise": "^0.0.33",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.1"
   }
 }

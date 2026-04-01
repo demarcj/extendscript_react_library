@@ -87,6 +87,14 @@ if (!String.prototype.includes) {
     return this.indexOf(String(searchString), start) !== -1;
   };
 }
+if (!String.prototype.trim) {
+  String.prototype.trim = function() {
+    if (this == null) {
+      throw new TypeError("String.prototype.trim called on null or undefined");
+    }
+    return String(this).replace(/^\s+|\s+$/g, "");
+  };
+}
 if (!String.prototype.replaceAll) {
   String.prototype.replaceAll = function(searchValue, replaceValue) {
     if (this == null) {
@@ -267,7 +275,132 @@ if (typeof JSON.stringify !== "function") {
   };
 }
 
+// ts/library/extendscript/library.ts
+var project = app.project;
+var active_comp = function() {
+  return project == null ? void 0 : project.activeItem;
+};
+var time = function() {
+  var _a;
+  return ((_a = active_comp()) == null ? void 0 : _a.time) || 0;
+};
+var selected_layers = function() {
+  var _a;
+  return (_a = active_comp()) == null ? void 0 : _a.selectedLayers;
+};
+var selected_layer = function() {
+  var _a;
+  return (_a = selected_layers()) == null ? void 0 : _a[0];
+};
+var all_layers = function() {
+  var _a;
+  return Array(((_a = active_comp()) == null ? void 0 : _a.layers.length) || 0).fill(void 0).map(function(layer, i) {
+    var _a2;
+    return (_a2 = active_comp()) == null ? void 0 : _a2.layer(i + 1);
+  });
+};
+var has_active_comp = function() {
+  try {
+    if (!(active_comp() && active_comp() instanceof CompItem)) {
+      throw new Error("No comp was selected");
+    }
+    return true;
+  } catch (e) {
+    alert("Please select a comp");
+    return false;
+  }
+};
+var has_layers = function() {
+  var _a;
+  try {
+    if (!((_a = active_comp()) == null ? void 0 : _a.layers)) {
+      throw new Error("No layer was selected");
+    }
+    return true;
+  } catch (e) {
+    alert("Please add layers to the active comp");
+    return false;
+  }
+};
+var has_selected_layer = function() {
+  var _a;
+  try {
+    if (!((_a = selected_layers()) == null ? void 0 : _a.length)) {
+      throw new Error("No layer selected");
+    }
+    return true;
+  } catch (e) {
+    alert("Please select a layer");
+    return false;
+  }
+};
+var has_single_selected_layer = function() {
+  var _a, _b;
+  try {
+    if (((_a = selected_layers()) == null ? void 0 : _a.length) && !(((_b = selected_layers()) == null ? void 0 : _b.length) === 1)) {
+      throw new Error("Has multiple layers selected");
+    }
+    return true;
+  } catch (e) {
+    alert("Please only select one layer");
+    return false;
+  }
+};
+var is_text_layer_empty = function() {
+  var _a;
+  try {
+    if (!((_a = selected_layer()) == null ? void 0 : _a.property("Source Text")).value.text.length) {
+      throw new Error("Text layer contains no text");
+    }
+    return true;
+  } catch (e) {
+    alert("This text layer is empty. Please add text to this layer");
+    return false;
+  }
+};
+var is_text_layer = function() {
+  var _a;
+  try {
+    if (((_a = selected_layer()) == null ? void 0 : _a.property("Source Text")) === null) {
+      throw new Error("No text layer was selected");
+    }
+    return true;
+  } catch (e) {
+    alert("Please select a text layer");
+    return false;
+  }
+};
+var check_error = function(check_func) {
+  return check_func.some(function(confirm) {
+    return !confirm();
+  });
+};
+var error_message = function(name) {
+  return alert("\n  The ".concat(name.length ? name + " " : "", "operation failed.\n  Some changes may have been applied.\n  Use Undo to revert the action if necessary. \n"));
+};
+var print = (function() {
+  var arr = [];
+  for (var i = 0; i < arguments.length; i++) {
+    arr.push(arguments[i]);
+  }
+  alert(arr.join("\n"));
+});
+var custom_alert = function(message) {
+  var win = new Window("dialog", "Alert");
+  win.orientation = "column";
+  win.add("statictext", void 0, message);
+  var btn_cancel = win.add("button", void 0, "Ok");
+  btn_cancel.onClick = function() {
+    return win.close(0);
+  };
+  win.center();
+  win.show();
+};
+
 // ts/hostscript.ts
 var sayHello = function() {
   return alert("Hello from ExtendScript!");
+};
+var panel_alert = function(message) {
+  return custom_alert(message);
 };
