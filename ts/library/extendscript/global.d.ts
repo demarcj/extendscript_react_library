@@ -329,8 +329,34 @@ interface File {
 declare var File: {
   new(path?: string): File;
   openDialog(prompt?: string, filter?: string): File | null;
+  openDialog(prompt: string | undefined, filter: string | undefined, multiSelect: false): File | null;
+  openDialog(prompt: string | undefined, filter: string | undefined, multiSelect: true): File[] | null;
+  openDialog(prompt?: string, filter?: string, multiSelect?: boolean): File | File[] | null;
   saveDialog(prompt?: string, filter?: string): File | null;
 }
+
+interface Window {
+  text: string;
+  orientation: "row" | "column" | "stack";
+  show(): number;
+  close(result?: number): void;
+  center(): void;
+  add(
+    type: string,
+    bounds?: any,
+    text?: string,
+    properties?: any
+  ): any;
+}
+
+declare var Window: {
+  new(
+    type?: "dialog" | "palette" | "window",
+    title?: string,
+    bounds?: any,
+    properties?: any
+  ): Window;
+};
 
 interface MarkerProperty extends Property{
   numKeys: number;

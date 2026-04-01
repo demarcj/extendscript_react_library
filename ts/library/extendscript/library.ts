@@ -94,3 +94,15 @@ export var print = (function () {
   }
   alert(arr.join("\n"));
 }) as any;
+
+export var custom_alert = (message: string) => {
+  var win = new Window("dialog", "Alert");
+  win.orientation = "column";
+  win.add("statictext", undefined, message);
+
+  var btn_cancel = win.add("button", undefined, "Ok");
+  btn_cancel.onClick = () => win.close(0);
+
+  win.center();
+  win.show();
+}
