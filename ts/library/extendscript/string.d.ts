@@ -1,5 +1,7 @@
 declare global {
   interface String {
+  trim(): string;
+
   includes(searchString: string, position?: number): boolean;
 
   replaceAll(searchValue: string | RegExp, replaceValue: string): string;

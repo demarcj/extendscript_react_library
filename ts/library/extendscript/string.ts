@@ -17,6 +17,16 @@ if (!String.prototype.includes) {
   };
 }
 
+if (!String.prototype.trim) {
+  String.prototype.trim = function (this: string): string {
+    if (this == null) {
+      throw new TypeError("String.prototype.trim called on null or undefined");
+    }
+
+    return String(this).replace(/^\s+|\s+$/g, "");
+  };
+}
+
 if (!String.prototype.replaceAll) {
   String.prototype.replaceAll = function (
     this: string,
@@ -80,4 +90,3 @@ if (!String.prototype.replaceAll) {
     return result;
   };
 }
-
