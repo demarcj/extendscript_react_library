@@ -4,7 +4,8 @@
     "target": "ES5",
     "module": "ESNext",
     "noEmit": true,           
-    "lib": ["ES5"],
+    "ignoreDeprecations": "6.0",
+    "lib": ["es5"]
   },
   "include": [
     "ts/hostscript.ts",
