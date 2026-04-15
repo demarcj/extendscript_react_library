@@ -49,14 +49,16 @@ Use this skill when:
    - only add declarations to `ts/library/cep_panel/cs_interface.d.ts` when they are specifically related to the `CSInterface` library or its typings
    - do not place unrelated app models, UI state types, or action data types in `cs_interface.d.ts`
 11. Prefer simple state shapes that mirror panel behavior.
-12. Use objects for mode or view configuration when that keeps rendering logic clearer than a `switch`.
-13. Use `if` statements for straightforward branching.
-14. Avoid deeply nested conditional rendering; move branches into small helper components when JSX starts getting noisy.
-15. Before expanding `main.tsx`, check whether the change belongs in a new component, section, dialog, or hook.
-16. Keep panel responsibilities separated from hostscript responsibilities.
-17. Make component names reflect the panel feature they represent.
-18. Keep event names explicit and consistent.
-19. Prefer reusable presentational pieces when multiple sections share layout or interaction patterns.
+12. Prefer `signals` functions instead of `useState` and `useEffect` whenever the same behavior can be expressed clearly with signal-based state and derived values.
+13. Use `useState` or `useEffect` only when signals are not a practical fit for the interaction, lifecycle, or external integration involved.
+14. Use objects for mode or view configuration when that keeps rendering logic clearer than a `switch`.
+15. Use `if` statements for straightforward branching.
+16. Avoid deeply nested conditional rendering; move branches into small helper components when JSX starts getting noisy.
+17. Before expanding `main.tsx`, check whether the change belongs in a new component, section, dialog, or hook.
+18. Keep panel responsibilities separated from hostscript responsibilities.
+19. Make component names reflect the panel feature they represent.
+20. Keep event names explicit and consistent.
+21. Prefer reusable presentational pieces when multiple sections share layout or interaction patterns.
 
 ## Output Format
 Responses and edits should reflect these outcomes:
@@ -65,6 +67,7 @@ Responses and edits should reflect these outcomes:
 - `main.tsx` remains focused on composition and shared wiring
 - event-based UI is encapsulated in dedicated dialog-style components
 - shared panel-facing types live under `ts/library/cep_panel/`
+- signal-driven state is preferred over `useState` and `useEffect` when practical
 - state and control flow stay readable and easy to extend
 
 ## Examples
@@ -80,10 +83,14 @@ Output: Define the shared type under `ts/library/cep_panel/` instead of inside o
 Input: Render a transformed list in the UI.
 Output: Prefer array methods like `map`, `filter`, `find`, and `some` over `for` loops.
 
+Input: Add local UI state or derived UI state in a component.
+Output: Prefer signal-based state and derived signal values before reaching for `useState` or `useEffect`.
+
 ## Notes
 - Avoid one large `main.tsx` component that owns nearly all panel markup and behavior.
 - Avoid `switch` statements for routine UI branching when an object map or `if` chain is clearer.
 - Avoid `for` loops for routine array transformations.
+- Avoid defaulting to `useState` and `useEffect` when signal-based state covers the same case more simply.
 - Avoid `console.log`-driven debugging in panel code.
 - Avoid oversized components that combine layout, business rules, dialog flow, and list rendering all together.
 - The TSX layer should feel modular, readable, and easy to grow as the After Effects actions panel gains more sections and guided interaction flows.
