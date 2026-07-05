@@ -1,15 +1,14 @@
 {
-  "name": "com.react.framework.panel",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "com.extendscript.react.framework.panel",
+  "version": "0.1.0",
+  "description": "A CEP panel built with React and ExtendScript",
   "scripts": {
     "build": "node build_hostscript.js && node build_main.js",
     "build_host": "node build_hostscript.js",
     "build_main": "node build_main.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["cep", "extendscript", "react", "after-effects"],
+  "author": "DeMarc Johnson",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.28.6",
