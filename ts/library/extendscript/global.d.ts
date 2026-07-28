@@ -144,6 +144,7 @@ interface Layer {
   copyToComp(comp: CompItem): void;
   sourceRectAtTime(time: number, extents: boolean): SourceRect;
   property(nameOrIndex: string | number): PropertyGroup;
+  property(name: "Marker"): MarkerProperty;
 }
 
 interface AVLayer extends Layer {
