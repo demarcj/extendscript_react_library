@@ -44,13 +44,19 @@ export var has_selected_layer = (): boolean => {
 }
 
 export var has_single_selected_layer = (): boolean => {
+  var err = ``;
   try{
-    if(selected_layers()?.length && !(selected_layers()?.length === 1)){
+    if(!(selected_layers()?.length)){
+      err = `Please select a layer`;
+      throw new Error("No layers has been selected");
+    }
+    if(!(selected_layers()?.length === 1)){
+      err = `Please only select one layer`
       throw new Error("Has multiple layers selected");
     }
     return true;
   } catch(e) {
-    alert("Please only select one layer");
+    alert(err);
     return false;
   }
 }
